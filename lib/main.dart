@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import './model/posts_model.dart';
+import 'services.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +20,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  List<Posts> posts = <Posts>[];
+
+  @override
+  void initState() {
+    super.initState();
+    Services.getPosts().then((list) {
+      setState(() {
+        posts = list;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +45,15 @@ class MyHomePage extends StatelessWidget {
         title: Text("Flutter Json"),
       ),
       body: Center(
-        child: Text("Parsing Json"),
+        child: ListView.builder(
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+          Posts p = posts[index];
+          return ListTile(
+            title: Text(p.title),
+            subtitle: Text(p.body),
+          );
+        }),
       ),
     );
   }
